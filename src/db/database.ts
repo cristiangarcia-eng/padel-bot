@@ -67,6 +67,11 @@ function migrate(db: Database.Database): void {
     db.exec('ALTER TABLE partidos ADD COLUMN notified_3 INTEGER NOT NULL DEFAULT 0');
   }
 
+  // Migration: add published column (default 1 so existing partidos stay published)
+  if (!colNames.includes('published')) {
+    db.exec('ALTER TABLE partidos ADD COLUMN published INTEGER NOT NULL DEFAULT 1');
+  }
+
   // Migration: add player level column
   const playerCols = db.pragma('table_info(partido_players)') as { name: string }[];
   const playerColNames = playerCols.map(c => c.name);

@@ -10,10 +10,11 @@ import {
   deletePartido,
   countPlayers,
   confirmPartido,
+  publishPartido,
   getPlayerLevelByPhone,
 } from '../../db/queries';
 import { config } from '../../config';
-import { notifyMilestoneIfReady } from '../../whatsapp/notifications';
+import { notifyMilestoneIfReady, notifyPartidoCreated } from '../../whatsapp/notifications';
 
 const router = Router();
 
@@ -43,6 +44,8 @@ router.get('/', (req: Request, res: Response) => {
         time: p.start_time,
         creator: p.creator_name,
         confirmed: !!p.confirmed,
+        published: !!p.published,
+        creator_phone: p.creator_phone,
         players: p.players.map(pl => ({
           name: pl.player_name,
           phone: pl.player_phone,
@@ -115,6 +118,9 @@ router.post('/', (req: Request, res: Response) => {
 
   const memberTypeNum = member_type === 'deportivo' ? 1 : member_type === 'paseante' ? 2 : 0;
   const partido = createPartido(slot_date, start_time, player_name, player_phone, memberTypeNum, level || '');
+
+  // No notification on create — partido starts as draft. Notification fires on publish.
+
   res.json({ ok: true, partido });
 });
 
@@ -157,14 +163,72 @@ router.post('/:id/join', (req: Request, res: Response) => {
 
   const updated = getPartidoById(id)!;
 
-  // Trigger milestone notifications (2/4, 3/4, 4/4)
-  if (newCount >= 2) {
+  // Only trigger milestone notifications for published partidos
+  if (updated.published && newCount >= 2) {
     notifyMilestoneIfReady(
       updated.slot_date, updated.start_time, updated.players, updated.id,
       newCount, !!updated.notified_2, !!updated.notified_3,
       !!updated.confirmed, !!updated.notified
     ).catch(err => {
       console.error('Error notifying milestone:', err);
+    });
+  }
+
+  res.json({ ok: true, partido: updated });
+});
+
+// POST /api/partidos/:id/publish — publish a draft partido (creator only)
+router.post('/:id/publish', (req: Request, res: Response) => {
+  const id = parseInt(req.params.id as string, 10);
+  const { player_phone } = req.body;
+
+  const partido = getPartidoById(id);
+  if (!partido) {
+    res.status(404).json({ error: 'Partido no encontrado' });
+    return;
+  }
+
+  if (partido.creator_phone !== player_phone) {
+    res.status(403).json({ error: 'Solo el creador puede publicar el partido' });
+    return;
+  }
+
+  if (partido.published) {
+    res.status(409).json({ error: 'El partido ya está publicado' });
+    return;
+  }
+
+  publishPartido(id);
+
+  const playerCount = partido.players.length;
+
+  // Auto-confirm if already full
+  if (playerCount >= config.playersPerMatch && !partido.confirmed) {
+    confirmPartido(id);
+  }
+
+  const updated = getPartidoById(id)!;
+
+  // Send single smart notification based on player count
+  if (playerCount >= 4 && updated.confirmed) {
+    notifyMilestoneIfReady(
+      updated.slot_date, updated.start_time, updated.players, updated.id,
+      playerCount, false, false, true, false
+    ).catch(err => console.error('Error notifying on publish:', err));
+  } else if (playerCount === 3) {
+    notifyMilestoneIfReady(
+      updated.slot_date, updated.start_time, updated.players, updated.id,
+      playerCount, false, false, false, false
+    ).catch(err => console.error('Error notifying on publish:', err));
+  } else if (playerCount === 2) {
+    notifyMilestoneIfReady(
+      updated.slot_date, updated.start_time, updated.players, updated.id,
+      playerCount, false, false, false, false
+    ).catch(err => console.error('Error notifying on publish:', err));
+  } else {
+    // 1 player — send "propone partido" notification
+    notifyPartidoCreated(updated.creator_name, updated.slot_date, updated.start_time).catch(err => {
+      console.error('Error notifying partido created on publish:', err);
     });
   }
 

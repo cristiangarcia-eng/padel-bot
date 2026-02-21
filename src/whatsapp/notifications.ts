@@ -167,6 +167,7 @@ export async function notifyMilestoneIfReady(
 export async function processQueuedNotifications(): Promise<void> {
   const pending = getPartidosWithPendingMilestones();
   for (const p of pending) {
+    if (!p.published) continue; // Skip draft partidos
     if (!canNotifyNow(p.slot_date)) continue;
 
     const count = p.players.length;
@@ -181,6 +182,25 @@ export async function processQueuedNotifications(): Promise<void> {
     } else if (count >= 2 && !p.notified_2) {
       await sendMilestone2(p.slot_date, p.start_time, p.players, p.id);
     }
+  }
+}
+
+export async function notifyPartidoCreated(
+  creatorName: string,
+  slotDate: string,
+  startTime: string
+): Promise<void> {
+  const dateFormatted = formatDate(slotDate);
+  const msg = [
+    `🎾 *${creatorName}* propone partido el ${dateFormatted} a las ${startTime}`,
+    `👉 ¡Apúntate! ${config.baseUrl}`,
+  ].join('\n');
+
+  try {
+    await sendMessage(config.waGroupId, msg);
+    console.log(`📨 Notificación de nuevo partido enviada (${creatorName}, ${slotDate} ${startTime})`);
+  } catch (err) {
+    console.error('Error sending partido created notification:', err);
   }
 }
 

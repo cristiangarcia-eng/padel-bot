@@ -11,6 +11,7 @@ export interface Partido {
   notified: number;
   notified_2: number;
   notified_3: number;
+  published: number;
   created_at: string;
 }
 
@@ -45,7 +46,7 @@ export function createPartido(
   const db = getDb();
 
   const stmt = db.prepare(
-    'INSERT INTO partidos (slot_date, start_time, creator_name, creator_phone) VALUES (?, ?, ?, ?)'
+    'INSERT INTO partidos (slot_date, start_time, creator_name, creator_phone, published) VALUES (?, ?, ?, ?, 0)'
   );
   const result = stmt.run(slotDate, startTime, creatorName, creatorPhone);
   const partidoId = result.lastInsertRowid as number;
@@ -122,6 +123,11 @@ export function countPlayers(partidoId: number): number {
 export function confirmPartido(partidoId: number): void {
   const db = getDb();
   db.prepare('UPDATE partidos SET confirmed = 1 WHERE id = ?').run(partidoId);
+}
+
+export function publishPartido(partidoId: number): void {
+  const db = getDb();
+  db.prepare('UPDATE partidos SET published = 1 WHERE id = ?').run(partidoId);
 }
 
 export function markPartidoNotified(partidoId: number): void {
