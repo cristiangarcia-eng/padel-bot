@@ -469,6 +469,30 @@ body {
   to { transform: translateY(0); }
 }
 
+.modal--fullscreen {
+  max-height: 100vh;
+  max-height: 100dvh;
+  height: 100%;
+  border-radius: 0;
+  animation: none;
+  padding-bottom: 0;
+}
+
+.modal--fullscreen::before {
+  display: none;
+}
+
+.draft-publish-footer {
+  position: sticky;
+  bottom: 0;
+  background: var(--white);
+  padding: 0.75rem 0 max(1rem, env(safe-area-inset-bottom));
+  margin: 0 -1.25rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  border-top: 1px solid var(--border-light);
+}
+
 .modal-close {
   float: right;
   background: var(--sand);
@@ -510,7 +534,6 @@ body {
 }
 
 .form-row input[type="text"],
-.form-row input[type="tel"],
 .form-row input[type="time"],
 .form-row input[type="date"] {
   width: 100%;
@@ -853,10 +876,11 @@ body {
 
 /* === TOAST === */
 .toast {
+  display: none;
   position: fixed;
   bottom: 6.5rem;
   left: 50%;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(-50%);
   background: var(--text);
   color: var(--white);
   padding: 0.75rem 1.25rem;
@@ -864,16 +888,12 @@ body {
   font-size: 0.82rem;
   font-weight: 700;
   z-index: 9999;
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s, visibility 0.35s;
   box-shadow: var(--shadow-lg);
   max-width: 90vw;
   text-align: center;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
 }
 
-.toast.show { opacity: 1; visibility: visible; pointer-events: auto; }
+.toast.show { display: block; }
 .toast.toast-error { background: var(--amber); }
 
 /* === LOADING === */
@@ -1178,13 +1198,16 @@ body {
   }
 
   // --- Modal ---
-  function openModal(html) {
-    document.getElementById('modalContent').innerHTML = html;
+  function openModal(html, fullscreen) {
+    var modal = document.getElementById('modalContent');
+    modal.innerHTML = html;
+    modal.classList.toggle('modal--fullscreen', !!fullscreen);
     document.getElementById('modalOverlay').classList.add('show');
   }
 
   function closeModal() {
     document.getElementById('modalOverlay').classList.remove('show');
+    document.getElementById('modalContent').classList.remove('modal--fullscreen');
   }
 
   document.getElementById('modalOverlay').addEventListener('click', function(e) {
@@ -1533,7 +1556,7 @@ body {
       </div>
       <div class="form-row">
         <label>Tu teléfono</label>
-        <input type="tel" id="m-phone" placeholder="612345678" value="${profile.phone || ''}">
+        <input type="text" inputmode="tel" id="m-phone" placeholder="612345678" value="${profile.phone || ''}">
       </div>
       <div class="form-row">
         <label>Tipo de socio</label>
@@ -1595,14 +1618,74 @@ body {
           level: level
         });
         saveProfile({ name, phone, member_type: memberType, level: level });
-        showToast('Partido creado — añade jugadores y publica');
+        showToast('Partido creado');
         closeModal();
         await loadWeek();
-        showPartidoDetail(result.partido.id);
+        showDraftChoiceModal(result.partido.id);
       } catch (err) {
         showToast(err.message, true);
         this.disabled = false;
         this.textContent = 'Crear partido';
+      }
+    });
+  }
+
+  // --- Draft choice modal (shown once after creation) ---
+  function showDraftChoiceModal(id) {
+    const profile = loadProfile();
+    let partido = null;
+    for (const day of weekData.days) {
+      partido = day.partidos.find(p => p.id === id);
+      if (partido) break;
+    }
+    if (!partido) return;
+
+    const d = weekData.days[selectedDayIndex];
+    const dateObj = new Date(d.date + 'T00:00:00');
+    const dayLabel = dayNamesShort[selectedDayIndex] + ' ' + fmtDateShort(dateObj);
+
+    let html = '';
+    html += '<button class="modal-close" onclick="document.getElementById(\'modalOverlay\').classList.remove(\'show\')">×</button>';
+    html += '<div class="modal-title">' + partido.time + ' — ' + dayLabel + '</div>';
+    html += '<p style="font-size:0.82rem;color:var(--confirmed);margin-bottom:1rem;font-weight:700">✓ Partido creado</p>';
+
+    html += '<ul class="player-list">';
+    partido.players.forEach(function(p, i) {
+      var isYou = profile.phone && p.phone === profile.phone;
+      html += '<li><span class="player-dot"></span> ' + p.name;
+      if (i === 0) html += ' <span style="font-size:0.6rem;color:var(--text-muted);font-weight:700">(organiza)</span>';
+      if (isYou) html += ' <span class="player-you">TÚ</span>';
+      html += '</li>';
+    });
+    for (var i = partido.count; i < partido.max; i++) {
+      html += '<li style="color:var(--text-muted)"><span class="player-dot" style="background:var(--border)"></span> Libre</li>';
+    }
+    html += '</ul>';
+
+    html += '<div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem">';
+    html += '<button class="btn-secondary" id="dc-add-players" style="margin-top:0">Añadir jugadores</button>';
+    html += '<button class="btn-publish" id="dc-publish" style="margin-bottom:0">Publicar partido</button>';
+    html += '</div>';
+
+    openModal(html);
+
+    document.getElementById('dc-add-players').addEventListener('click', function() {
+      closeModal();
+      showPartidoDetail(id);
+    });
+
+    document.getElementById('dc-publish').addEventListener('click', async function() {
+      this.disabled = true;
+      this.textContent = 'Publicando...';
+      try {
+        await apiPublishPartido(id, profile.phone);
+        showToast('Partido publicado');
+        closeModal();
+        await loadWeek();
+      } catch (err) {
+        showToast(err.message, true);
+        this.disabled = false;
+        this.textContent = 'Publicar partido';
       }
     });
   }
@@ -1666,7 +1749,7 @@ body {
         <div class="form-row"><label>Tu nombre</label>
         <input type="text" id="mj-name" placeholder="Tu nombre" value="${profile.name || ''}"></div>
         <div class="form-row"><label>Tu teléfono</label>
-        <input type="tel" id="mj-phone" placeholder="612345678" value="${profile.phone || ''}"></div>
+        <input type="text" inputmode="tel" id="mj-phone" placeholder="612345678" value="${profile.phone || ''}"></div>
         <div class="form-row"><label>Tipo de socio</label>
           <div class="member-type-selector" id="mj-member-type">
             <button type="button" class="member-type-option ${profile.member_type === 'deportivo' ? 'selected' : ''}" data-value="deportivo">Deportivo</button>
@@ -1684,41 +1767,73 @@ body {
         <button class="btn-primary" id="mj-join">Unirme al partido</button>
       `;
     } else if (userInPartido) {
-      // Creator's add-player form (shown for both draft and published, while not full)
+      // Creator's add-player form
       if (isCreator && !isFull) {
-        const addFormExpanded = isDraft; // Auto-expand for drafts
-        html += `
-          <div style="border-top:1px solid var(--border-light);padding-top:0.75rem;margin-top:0.5rem">
-            <button class="btn-secondary" id="mj-add-toggle" style="margin-top:0">${addFormExpanded ? '− Cancelar' : '+ Añadir jugador'}</button>
-            <div id="mj-add-form" style="display:${addFormExpanded ? 'block' : 'none'};margin-top:0.75rem">
-              <div class="form-row"><label>Nombre</label>
-              <input type="text" id="mj-add-name" placeholder="Nombre del jugador"></div>
-              <div class="form-row"><label>Teléfono</label>
-              <input type="tel" id="mj-add-phone" placeholder="612345678"></div>
-              <div class="form-row"><label>Tipo de socio</label>
-                <div class="member-type-selector" id="mj-add-member-type">
-                  <button type="button" class="member-type-option" data-value="deportivo">Deportivo</button>
-                  <button type="button" class="member-type-option" data-value="paseante">Paseante</button>
-                  <button type="button" class="member-type-option selected" data-value="no_socio">No socio</button>
+        if (isDraft) {
+          // Draft: toggle like published, but auto-expanded
+          html += `
+            <div style="border-top:1px solid var(--border-light);padding-top:0.75rem;margin-top:0.5rem">
+              <button class="btn-secondary" id="mj-add-toggle" style="margin-top:0">− Cancelar</button>
+              <div id="mj-add-form" style="margin-top:0.75rem">
+                <div class="form-row"><label>Nombre</label>
+                <input type="text" id="mj-add-name" placeholder="Nombre del jugador"></div>
+                <div class="form-row"><label>Teléfono</label>
+                <input type="text" inputmode="tel" id="mj-add-phone" placeholder="612345678"></div>
+                <div class="form-row"><label>Tipo de socio</label>
+                  <div class="member-type-selector" id="mj-add-member-type">
+                    <button type="button" class="member-type-option" data-value="deportivo">Deportivo</button>
+                    <button type="button" class="member-type-option" data-value="paseante">Paseante</button>
+                    <button type="button" class="member-type-option selected" data-value="no_socio">No socio</button>
+                  </div>
                 </div>
-              </div>
-              <div class="form-row"><label>Nivel de pádel</label>
-                <div class="level-row">
-                  ${levelSelectHtml('mj-add-level', '')}
-                  <button type="button" class="level-info-btn" id="mj-add-level-info">?</button>
+                <div class="form-row"><label>Nivel de pádel</label>
+                  <div class="level-row">
+                    ${levelSelectHtml('mj-add-level', '')}
+                    <button type="button" class="level-info-btn" id="mj-add-level-info">?</button>
+                  </div>
+                  <div id="mj-add-level-info-panel" style="display:none"></div>
                 </div>
-                <div id="mj-add-level-info-panel" style="display:none"></div>
+                <button class="btn-primary" id="mj-add-submit">Añadir al partido</button>
               </div>
-              <button class="btn-primary" id="mj-add-submit">Añadir al partido</button>
             </div>
-          </div>
-        `;
+          `;
+        } else {
+          // Published: toggle to show/hide form
+          html += `
+            <div style="border-top:1px solid var(--border-light);padding-top:0.75rem;margin-top:0.5rem">
+              <button class="btn-secondary" id="mj-add-toggle" style="margin-top:0">+ Añadir jugador</button>
+              <div id="mj-add-form" style="display:none;margin-top:0.75rem">
+                <div class="form-row"><label>Nombre</label>
+                <input type="text" id="mj-add-name" placeholder="Nombre del jugador"></div>
+                <div class="form-row"><label>Teléfono</label>
+                <input type="text" inputmode="tel" id="mj-add-phone" placeholder="612345678"></div>
+                <div class="form-row"><label>Tipo de socio</label>
+                  <div class="member-type-selector" id="mj-add-member-type">
+                    <button type="button" class="member-type-option" data-value="deportivo">Deportivo</button>
+                    <button type="button" class="member-type-option" data-value="paseante">Paseante</button>
+                    <button type="button" class="member-type-option selected" data-value="no_socio">No socio</button>
+                  </div>
+                </div>
+                <div class="form-row"><label>Nivel de pádel</label>
+                  <div class="level-row">
+                    ${levelSelectHtml('mj-add-level', '')}
+                    <button type="button" class="level-info-btn" id="mj-add-level-info">?</button>
+                  </div>
+                  <div id="mj-add-level-info-panel" style="display:none"></div>
+                </div>
+                <button class="btn-primary" id="mj-add-submit">Añadir al partido</button>
+              </div>
+            </div>
+          `;
+        }
       }
-      // Publish button for draft partidos (creator only)
+      // Publish button in sticky footer for draft partidos (creator only)
       if (isCreator && isDraft) {
-        html += '<button class="btn-publish" id="mj-publish">Publicar partido</button>';
+        html += `<div class="draft-publish-footer">
+          <button class="btn-publish" id="mj-publish" style="margin-bottom:0">Publicar partido</button>
+        </div>`;
       }
-      if (!partido.confirmed) {
+      if (!isDraft && !partido.confirmed) {
         html += '<button class="btn-danger" id="mj-leave">Desapuntarme</button>';
       }
       if (isCreator) {
@@ -1726,7 +1841,7 @@ body {
       }
     }
 
-    openModal(html);
+    openModal(html, isDraft && isCreator);
 
     document.querySelectorAll('#mj-member-type .member-type-option').forEach(btn => {
       btn.addEventListener('click', function() {
