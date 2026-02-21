@@ -1,0 +1,13 @@
+services:
+  padel-bot:
+    build: .
+    container_name: padel-bot
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+      - ./auth_info:/app/auth_info
+      - ./.env:/app/.env
+    environment:
+      - NODE_ENV=production
