@@ -28,13 +28,13 @@ Se analizaron las 30 mayores economías del mundo evaluando: marco legal para cu
 | 9 | Canadá | RESP + ITF | 18-19 | Sí (RESP + grants 20%) | 1.25 | 54,900 | 95% | Baja-Media | Fuerte (cultura RESP) | **7** |
 | 10 | Brasil | Custodia/guardián | 18 | Parcial (poupança) | 1.62 | 10,780 | 89% | **Muy baja** | Moderada | **5** |
 | 11 | Rusia | Sin framework claro | 18 | No | 1.5 | 12,800 | 80% | Muy baja | Moderada | **2** |
-| 12 | Corea del Sur | Cuenta custodia minores | 19 | Parcial | 0.72 | 34,000 | 97% | Baja | **Muy fuerte** (sebaetdon) | **7** |
+| 12 | Corea del Sur | Cuenta custodia minores | 19 | Parcial (20M KRW/10yr exempt) | 0.72 | 34,000 | 95.3% | Baja | **Muy fuerte** (sebaetdon, 돌잔치) | **7** |
 | 13 | Australia | Minor Trust Account | 18 | Parcial (tax-free threshold) | 1.6 | 65,000 | 93% | Baja | Fuerte | **8** |
 | 14 | México | Sin framework específico | 18 | No | 1.8 | 11,500 | 78% | Muy baja | Moderada | **5** |
 | 15 | España | Fondos a nombre menor | 18 | Parcial (según CCAA) | 1.16 | 33,000 | 95% | **Muy baja** | Moderada | **7** |
-| 16 | Indonesia | Sin framework claro | 21 | No | 2.1 | 4,900 | 74% | Muy baja | Fuerte (Eid) | **4** |
+| 16 | Indonesia | Tabungan Anak (qq parent) | 17 | No gift tax (familia) | 2.1 | 5,083 | 68% | **Muy baja** | **Fuerte** (Eid + angpao) | **5** |
 | 17 | Países Bajos | Beleggingsrekening minor | 18 | No (box 3 wealth tax) | 1.49 | 61,000 | 96% | Baja | Moderada | **6** |
-| 18 | Arabia Saudí | Cuentas custodia bancarias | 18 | **Sin impuestos** | 2.3 | 30,000 | 96% | Muy baja | **Fuerte** (Eidiya) | **5** |
+| 18 | Arabia Saudí | Cuentas custodia bancarias (Sharia) | 17.5 (18 Hijri) | **Sin impuestos** | 2.15 | 33,040 | 97% | **Muy baja** | **Muy fuerte** (Eidiya) | **8** |
 | 19 | Turquía | Cuenta custodia limitada | 18 | Parcial | 1.6 | 10,600 | 84% | Muy baja | Fuerte (bayram) | **4** |
 | 20 | Suiza | Depot para menores | 18 | No (wealth tax) | 1.39 | 98,000 | 96% | Baja | Moderada | **6** |
 | 21 | Polonia | Sin régimen específico | 18 | Gift tax exempt (familia) | 1.1 | 25,000 | 89% | **Muy baja** | Fuerte (Comunión) | **5** |
@@ -81,6 +81,13 @@ Se analizaron las 30 mayores economías del mundo evaluando: marco legal para cu
 - **Marco legal:** Cuentas custodia bancarias bien establecidas. Reciente reducción de mayoría de edad a 18 años.
 - **Oportunidad:** Población 85% expatriada crea demanda de soluciones multi-divisa y cross-border. Edfundo existe pero es más banking que inversión.
 - **Riesgos:** Mercado pequeño en nacimientos absolutos, regulación puede cambiar.
+
+#### 5. Arabia Saudí — Score: 8/10 (UPGRADE desde Tier 3)
+- **Por qué:** CERO impuestos (income, capital gains, gift, herencia). 99% penetración internet, 97% smartphone, 79% pagos electrónicos. Natalidad saludable (TFR 2.15). Vision 2030 es agresivamente pro-fintech (224 fintechs licenciadas).
+- **Cultura:** Eidiya es una de las tradiciones de regalos monetarios más fuertes del mundo. Regalos de oro en nacimientos y bodas.
+- **Oportunidad:** SIN app dedicada de inversión infantil en un mercado de 34M personas con renta media-alta. STC Pay (10M+ usuarios) tiene licencia bancaria pero no ha entrado en el nicho infantil.
+- **Marco legal:** Guardianship basado en Sharia. Requiere productos Sharia-compliant.
+- **Riesgos:** Regulación Sharia requiere expertise, históricamente solo padres (varones) podían abrir cuentas (cambiando), mercado relativamente opaco.
 
 ---
 
@@ -175,9 +182,6 @@ Se analizaron las 30 mayores economías del mundo evaluando: marco legal para cu
 #### 21. Bélgica — Score: 5/10
 - itsme (eID) es excelente. Sin CGT en acciones. Pero: mercado pequeño (11.7M), sin framework dedicado.
 
-#### 22. Arabia Saudí — Score: 5/10
-- Sin impuestos personales. Fuerte tradición de Eidiya. Pero: restricciones regulatorias, mercado menos abierto a fintech extranjeras, consideraciones de género (históricamente solo padres podían abrir cuentas).
-
 #### 23. India — Score: 6→5/10
 - Mercado ENORME (23M nacimientos/año). UPI es la infraestructura de pagos más avanzada del mundo. Cultura de regalo de oro/dinero fortísima. PERO: PIB per cápita muy bajo ($2.8K), montos de inversión pequeños, framework fragmentado (SSY solo para niñas, PPF, Demat separados). Clasificado aquí porque el unit economics es desafiante.
 
@@ -260,11 +264,11 @@ Se analizaron las 30 mayores economías del mundo evaluando: marco legal para cu
 - Canadá: el 20% match del gobierno (CESG) es un selling point natural.
 
 ### Fase 3: Mercados premium de alta cultura de regalo (Meses 12-18)
-**Mercados:** Israel + UAE + Japón (si Junior NISA aprobado)
+**Mercados:** Israel + UAE + Arabia Saudí + Japón (si Junior NISA aprobado)
 
 **Justificación:**
 - Israel: natalidad más alta del mundo desarrollado + Bar/Bat Mitzvah + tech ecosystem.
-- UAE: cero impuestos + alta digitalización + Eidiya + población expat wealthy.
+- UAE + Arabia Saudí: cero impuestos + alta digitalización + Eidiya + Vision 2030 pro-fintech. Pueden compartir producto Sharia-compliant para ambos mercados del Golfo.
 - Japón: nuevo Junior NISA (2027) crea ventana de oportunidad + otoshidama es perfecta para birthday pages.
 
 ### Fase 4: Mercados grandes con localización (Meses 18-24)
