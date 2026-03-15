@@ -90,13 +90,16 @@ Espacio digital privado para curar los momentos más importantes de la infancia.
 ### Funcionalidades de Cada Memoria
 
 - Subir hasta **5 fotos O 1 video** por memoria
+- **Micro-Albums** (Q1 2024): una sola memoria soporta múltiples fotos/videos para capturar la historia completa
 - Nombrar la memoria con título personalizado
 - Escribir mensaje personalizado
-- Etiquetar personas presentes
+- **Social tagging** ("Who was there?"): etiquetar familia y amigos presentes
+- **Categorización**: tipo de memoria + ubicación/location tracking
 - Opcionalmente vincular una inversión a esa memoria
+- **EarlyBird Impact**: visualización del valor emocional y financiero de cada memoria creada
 - Compartir con el Nest para que otros celebren
 - **Totalmente editables** después de creadas (fotos, mensaje, monto de inversión)
-- Almacenamiento encriptado con cifrado de grado industrial
+- Almacenamiento ilimitado, encriptado con cifrado de grado industrial
 - El usuario mantiene la propiedad de todo su contenido multimedia
 - Descargable en caso de cierre de la plataforma (con timeline de gracia)
 
@@ -232,6 +235,7 @@ Red privada y cerrada alrededor de cada niño. Solo miembros invitados pueden ve
 | Feature | Detalle |
 |---------|---------|
 | Babylist integration | EarlyBird como item en baby registries de Babylist |
+| Amazon Registry | También integrable en Amazon baby registry |
 | Listado en Babylist Shop | "Fund Baby's Future" |
 | Instrucciones paso a paso | Para agregar EarlyBird al registro vía desktop |
 | Bebé por nacer | Posibilidad de crear cuenta para un hijo en camino |
@@ -251,18 +255,29 @@ Red privada y cerrada alrededor de cada niño. Solo miembros invitados pueden ve
 | Sign-up bonus | $25 por crear cuenta |
 | Swagbucks partnership | $50 bonus (5,000 SB) por abrir cuenta + primera inversión de $15 (activa 30 días) |
 | Feedback incentive | $15 crédito por dar feedback del producto |
-| Acorns transition | 1 año gratis de Acorns Gold ($12/mes normalmente) para usuarios existentes |
+| Acorns transition | 2 meses gratis de Acorns Gold + 1% match en Acorns Early Invest (o 1 año gratis según fuente) |
 | Crypto promo | Hasta $130 crypto gratis (existentes), $75 (nuevos) — Ene-Mar 2022 |
 | Crypto waitlist bonus | $25 por early access |
 | Nest invite promo | Invitar 5 miembros = hasta $10 invertidos ($2/nuevo miembro) |
 
 ---
 
-## 11. EARLYBIRD REWARDS (2024)
+## 11. GAMIFICACIÓN Y REWARDS
 
+### EarlyBird Rewards (2024)
 - Ganar **cash real para invertir** cada vez que compartías momentos y celebrabas en la plataforma
 - "Cada foto, video y milestone contribuye directamente al futuro financiero de tu hijo"
 - Gamificación: actividad social = recompensa financiera
+
+### Moment of the Week
+- EarlyBird invertía **$10 en la cuenta del niño destacado** mensualmente
+
+### #LegacyLeaderboard
+- Reconocimiento mensual del **top 10 de creadores de memorias**
+
+### EarlyBird 2.0 Launch Promo
+- $1 bonus boost por cada contribución de Nest members a Moments
+- Máximo $90 en contribution boosts por niño durante la promoción
 
 ---
 
@@ -285,13 +300,15 @@ Red privada y cerrada alrededor de cada niño. Solo miembros invitados pueden ve
 |------|---------|
 | Tiempo total | Menos de 3 minutos |
 | 1 | Descargar app (iOS o Android) |
-| 2 | Crear cuenta con verificación de identidad + MFA |
-| 3 | Responder 3 preguntas: experiencia inversora, tolerancia al riesgo, objetivos |
-| 4 | Algoritmo recomienda portafolio basado en edad del niño, horizonte, riesgo, metas |
-| 5 | Aceptar o personalizar portafolio (añadir hasta 2 ETFs) |
-| 6 | Conectar cuenta bancaria |
-| 7 | Configurar contribuciones (desde $5/mes) |
-| 8 | Comienza trial de 7 días |
+| 2 | Ingresar número de teléfono + código SMS de 4 dígitos |
+| 3 | Proporcionar nombre legal, apellido, email |
+| 4 | Aceptar Terms of Use y Privacy Policy |
+| 5 | Responder 3 preguntas: experiencia inversora, tolerancia al riesgo, objetivos |
+| 6 | Algoritmo recomienda portafolio basado en edad del niño, horizonte, riesgo, metas |
+| 7 | Aceptar o personalizar portafolio (añadir hasta 2 ETFs) |
+| 8 | Conectar cuenta bancaria (vía Plaid) |
+| 9 | Configurar contribuciones (desde $5/mes) |
+| 10 | Comienza trial de 7 días |
 | Alternativa | Onboarding gratuito solo para Time Capsule (sin inversión) |
 | Multi-hijo | Crear cuentas para múltiples hijos, incluyendo bebé en camino |
 
@@ -316,16 +333,54 @@ Red privada y cerrada alrededor de cada niño. Solo miembros invitados pueden ve
 
 ## 15. PLATAFORMA Y TÉCNICO
 
+### Tech Stack
+
+| Componente | Tecnología |
+|------------|-----------|
+| Frontend | React Native (iOS + Android nativos) |
+| Backend | NodeJS en AWS Serverless |
+| Banking | Plaid (conexión bancaria) |
+| Pagos | Dwolla (procesamiento de pagos) |
+| Trading | Apex Clearing (APIs de inversión) |
+| Suscripciones | RevenueCat |
+| Crypto | Gemini (custodia) |
+
+### Plataformas y Distribución
+
 | Feature | Detalle |
 |---------|---------|
 | iOS | "EarlyBird: Invest & Celebrate" → "EarlyBird: Invest. Gift. Grow." → "EarlyBird: Time Capsule" |
 | Android | Google Play Store |
 | Web | Vista previa de regalos sin descargar app |
-| Suscripciones | Gestionadas vía RevCat |
+| App ratings | 4.8 estrellas, 300+ reviews de 4 estrellas (iOS y Android) |
 | Contactos | Integración con contactos del teléfono para enviar regalos |
-| Push notifications | Para actividad del Nest |
+| Push notifications | Para actividad del Nest, milestones, birthday reminders |
+| Email notifications | Para actividad del Nest |
 | SMS notifications | Para entrega de regalos y recordatorios |
+| Smart prompts | Recordatorios semanales/mensuales para crear memorias |
 | Multi-hijo | Ilimitado bajo una suscripción |
+
+### Paleta de Colores (Brand)
+
+| Color | Hex | Uso |
+|-------|-----|-----|
+| Teal/Cyan primario | #04ADBF | Estados activos, acentos |
+| Dark Teal/Navy | #0a2630 | Fondo principal de marca |
+| Naranja secundario | #FF7D5F | Highlights |
+| Azul acento | #2A80F4 | Elementos de portafolio |
+| Púrpura acento | #5C27FF | Estilos alternativos |
+| Grises neutros | #CAD5D6, #A0E2E9 | Fondos, texto secundario |
+
+### Elementos Interactivos del Website
+
+- Mockups de teléfono con animaciones CSS flotantes (7s, 6-8s)
+- Monedas flotantes y elementos decorativos
+- Gradientes y overlays
+- Video autoplay en desktop (muted) con botón de play
+- Calculadora interactiva de proyección de inversión con controles +/-
+- Carrusel de testimonios con avatares enmascarados
+- QR code para descarga de app
+- Badges de App Store y Google Play
 
 ---
 
@@ -364,10 +419,12 @@ Rediseño mayor de la plataforma: "Family Finance Reimagined"
 |---------|-------|
 | Familias registradas | +250,000 |
 | Invirtiendo activamente | +100,000 |
+| Inversores totales | ~70,000 (MoneyMade) |
 | Nest members promedio por niño | 8+ |
 | Contribución mensual promedio/niño | $105 |
-| AUM divulgado | $1M+ (extremadamente bajo) |
-| App Store ratings | 4.6/5 (iOS) |
+| AUM divulgado | ~$4M across 70K investors (MoneyMade) / $1M+ (sitio oficial) |
+| App Store ratings | 4.8/5, 300+ reviews (iOS y Android) |
+| Retorno esperado | 6-10% anual según tolerancia al riesgo (S&P 500 histórico: 10.67%) |
 
 ---
 
@@ -405,3 +462,14 @@ Rediseño mayor de la plataforma: "Family Finance Reimagined"
 - [Medium/Wharton FinTech: EarlyBird CEO Interview](https://medium.com/wharton-fintech/earlybird-ceo-it-takes-a-village-to-invest-in-the-next-generation-e752b3eb1c43)
 - [Built In Chicago: EarlyBird](https://www.builtinchicago.org/articles/chicago-future-5-startup-earlybird-q2-2022)
 - [The Fintech Times: Behind the Idea](https://thefintechtimes.com/behind-the-idea-earlybird/)
+- [Agility FinTech Case Study](https://fintech.agilityio.com/case-study/early-bird-fintech-mobile-investment-app-case-study)
+- [MoneyMade: EarlyBird](https://moneymade.io/discover/earlybird)
+- [EarlyBird Gift Page](https://www.getearlybird.io/gift)
+- [EarlyBird Join Nest](https://www.getearlybird.io/join-nest)
+- [EarlyBird Introducing Moments](https://www.getearlybird.io/blog/introducing-moments)
+- [EarlyBird Memory-Saving Experience Update](https://www.getearlybird.io/blog/product-update-enhancing-your-memory-saving-experience)
+- [EarlyBird 2.0 Launch Offer](https://www.getearlybird.io/blog/earlybird-2-launch-offer)
+- [EarlyBird Better Gifting Flow](https://www.getearlybird.io/blog/feature-update-announcement-a-better-gifting-flow)
+- [EarlyBird Referrals](https://www.getearlybird.io/referrals)
+- [Product Hunt: EarlyBird 2.0](https://www.producthunt.com/posts/earlybird-2-0)
+- [Finextra: EarlyBird Crypto](https://www.finextra.com/pressarticle/91172/kids-investing-app-earlybird-adds-crypto-feature)
